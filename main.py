@@ -14,9 +14,10 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QMessageBox,
     QTableWidgetItem,
+    QHeaderView,
 )
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 
 
 # App Class
@@ -43,6 +44,8 @@ class ExpenseApp(QWidget):
         self.table.setColumnCount(5)  # ID, Date, Category, Amount, Description
         header_names = ["ID", "Date", "Category", "Amount", "Description"]
         self.table.setHorizontalHeaderLabels(header_names)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.sortByColumn(1, Qt.DescendingOrder)
 
         # Design App with Layouts
         self.dropdown.addItems(
@@ -55,6 +58,43 @@ class ExpenseApp(QWidget):
                 "Bills",
                 "Other",
             ]
+        )
+
+        self.setStyleSheet(
+            """
+            QWidget {background-color: #b8c9e1;}
+            
+            QLabel {
+                color: #333333;
+                font-size: 14px;
+            }
+            
+            QLineEdit, QComboBox, QDateEdit {
+                background-color: #b8c9e1;
+                color: #333333;
+                border: 1px solid #444444;
+                padding: 5px;
+            }
+            
+            QTableWidget {
+                background-color: #b8c9e1;
+                color: #333333;
+                border: 1px solid #444444;
+                selection-background-color: #dddddd;
+            }
+            
+            QHeaderView::section {background: #b8c9e1;}
+            
+            QPushButton {
+                background-color: #4caf50;
+                color: #ffffff;
+                border: none;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            QPushButton:hover {background-color: #45a049;}
+            """
         )
 
         self.master_layout = QVBoxLayout()
