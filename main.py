@@ -1,4 +1,6 @@
 # import modules
+import sys
+
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -10,7 +12,10 @@ from PyQt5.QtWidgets import (
     QTableWidget,
     QVBoxLayout,
     QHBoxLayout,
+    QMessageBox,
+    QTableWidgetItem,
 )
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 
 # App Class
@@ -63,6 +68,52 @@ class ExpenseApp(QWidget):
 
         # set layout
         self.setLayout(self.master_layout)
+
+        self.load_table()
+
+    def load_table(self):
+        self.table.setRowCount(0)
+
+        query = QSqlQuery("SELECT * FROM expenses")
+        row = 0
+        while query.next():
+            expense_id = query.value(0)
+            date = query.value(1)
+            category = query.value(2)
+            amount = query.value(3)
+            description = query.value(4)
+
+            # add values to Table
+            self.table.insertRow(row)
+
+            self.table.setItem(row, 0, QTableWidgetItem(str(expense_id)))
+            self.table.setItem(row, 1, QTableWidgetItem(date))
+            self.table.setItem(row, 2, QTableWidgetItem(category))
+            self.table.setItem(row, 3, QTableWidgetItem(str(amount)))
+            self.table.setItem(row, 4, QTableWidgetItem(description))
+
+            row += 1
+
+
+# create database
+database = QSqlDatabase.addDatabase("QSQLITE")
+database.setDatabaseName("expense.db")
+if not database.open():
+    QMessageBox.critical(None, "Error", "Could not open your Database")
+    sys.exit(1)
+
+query = QSqlQuery()
+query.exec_(
+    """
+    CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        category TEXT,
+        amount REAL,
+        description TEXT
+    )
+    """
+)
 
 
 # Run App
